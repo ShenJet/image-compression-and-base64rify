@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <input type="file" name="" id="sendImage" onchange="change()"><br>
+    <br>
+    <img id="y" src="" alt="">
+    <br>
+    <img id="x" src="" alt="">
+</body>
+<script>
+    function change(){
+        var Imginput = document.getElementById('sendImage');
+    var file = Imginput.files[0]; //得到该图片  
+    console.log(file.size);
+
+    var reader = new FileReader(); //创建一个FileReader对象，进行下一步的操作  
+    reader.readAsDataURL(file); //通过readAsDataURL读取图片  
+
+    reader.onload = function () { //读取完毕会自动触发，读取结果保存在result中  
+        console.log(this);
+        // control to less then 20kb
+        if (file.size / 1000 > 20) {
+            var img = new Image();
+            console.log(this.result);
+            var this_result = this.result
+            img.src = this.result; //获取编码后的值,也可以用this.result获取
+            
+            img.onload = function () {
+                console.log(this_result);
+                console.log(this.height, this.width)
+                var imgw = this.width,imgh = this.height
+                document.getElementById("y").src = this_result
+                // 压缩图片
+                var canvas = document.createElement('canvas')
+                // 返回一个用于在画布上绘图的环境, '2d' 指定了您想要在画布上绘制的类型
+                var ctx = canvas.getContext('2d');
+                // clear
+                ctx.height = ctx.height;
+                if (imgh >= imgw) {
+                    // 宽度等比例缩放 *=
+                    var h = 140;
+                    var w = imgw * 140 / imgh;
+                } else {
+                    // 宽度等比例缩放 *=
+                    var w = 140;
+                    var h = imgh * 140 / imgw;
+                }
+                console.log(w,h);
+                canvas.width = w
+                canvas.height = h
+                
+                ctx.drawImage(img, 0, 0, w, h);
+                document.body.appendChild(canvas)
+                uploadSrc = canvas.toDataURL(img.type, 1);
+                // var data = {
+                //     content: uploadSrc,
+                //     type: type
+                // };
+                console.log("大于20kb", data)
+                document.getElementById("x").src = uploadSrc
+                // socket.emit('message', data);
+            }
+        } else {
+            var data = {
+                content: this.result
+            };
+            document.getElementById("x").src = this.result
+            console.log("小于20kb", data)
+            // socket.emit('message', data);
+        }
+        
+    }
+    }
+</script>
+
+</html>
